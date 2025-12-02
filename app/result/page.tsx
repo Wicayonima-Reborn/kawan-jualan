@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function ResultPage() {
   const [loading, setLoading] = useState(true);
   const [output, setOutput] = useState<string>("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("businessData");
@@ -33,6 +34,13 @@ export default function ResultPage() {
     generate();
   }, []);
 
+  const handleCopy = async () => {
+    if (!output) return;
+    await navigator.clipboard.writeText(output);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="min-h-screen p-6 max-w-2xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Hasil Konten</h1>
@@ -45,12 +53,27 @@ export default function ResultPage() {
         </pre>
       )}
 
-      <button
-        className="bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700"
-        onClick={() => window.location.reload()}
-      >
-        Generate Ulang
-      </button>
+      <div className="flex gap-4">
+        {!loading && (
+          <button
+            onClick={handleCopy}
+            className={`px-4 py-3 rounded ${
+              copied
+                ? "bg-blue-700 text-white"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            } transition`}
+          >
+            {copied ? "Tersalin!" : "Copy"}
+          </button>
+        )}
+
+        <button
+          className="bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 transition"
+          onClick={() => window.location.reload()}
+        >
+          Generate Ulang
+        </button>
+      </div>
     </div>
   );
 }
