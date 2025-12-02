@@ -1,0 +1,56 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function ResultPage() {
+  const [loading, setLoading] = useState(true);
+  const [output, setOutput] = useState<string>("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("businessData");
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+
+    async function generate() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const json = await res.json();
+        setOutput(json.result || "Tidak ada hasil");
+      } catch (err) {
+        setOutput("Error generating content.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    generate();
+  }, []);
+
+  return (
+    <div className="min-h-screen p-6 max-w-2xl mx-auto space-y-6">
+      <h1 className="text-3xl font-bold">Hasil Konten</h1>
+
+      {loading ? (
+        <p className="animate-pulse text-gray-600">Sedang generate...</p>
+      ) : (
+        <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap text-gray-800">
+          {output}
+        </pre>
+      )}
+
+      <button
+        className="bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700"
+        onClick={() => window.location.reload()}
+      >
+        Generate Ulang
+      </button>
+    </div>
+  );
+}
