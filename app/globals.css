@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* Optional base styling */
+html, body {
+  background: #fafafa;
+  color: #111;
+  font-family: sans-serif;
+}
