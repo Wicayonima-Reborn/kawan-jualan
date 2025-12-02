@@ -4,6 +4,13 @@ export async function POST(req: Request) {
   try {
     const { nama, produk, target, tone } = await req.json();
 
+    if (!nama || !produk || !target || !tone) {
+      return NextResponse.json(
+        { success: false, error: "Semua input wajib diisi." },
+        { status: 400 }
+      );
+    }
+
     if (!process.env.KOLOSAL_API_KEY) {
       throw new Error("Missing KOLOSAL_API_KEY");
     }
@@ -22,20 +29,29 @@ Format output:
 3) Caption soft selling
 `;
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000); // safety
+
     const response = await fetch("https://api.kolosal.ai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.KOLOSAL_API_KEY}`,
       },
+      signal: controller.signal,
       body: JSON.stringify({
-        model: "Qwen 3 30BA3B",
+        model: "qwen/qwen3-vl-30b-a3b-instruct",
         messages: [{ role: "user", content: prompt }],
       }),
     });
 
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      throw new Error(`Kolosal API error: ${response.statusText}`);
+    }
+
     const data = await response.json();
-    console.log("RAW RESPONSE:", data);
 
     const result =
       data?.choices?.[0]?.message?.content ||
@@ -45,10 +61,10 @@ Format output:
 
     return NextResponse.json({ success: true, result });
   } catch (err: any) {
-    console.error("API Error:", err);
+    console.error("API Error:", err.message);
     return NextResponse.json(
       { success: false, error: err.message },
-      { status: 500 }
+      { status: err.name === "AbortError" ? 504 : 500 }
     );
   }
 }
