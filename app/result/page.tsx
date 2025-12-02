@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export default function ResultPage() {
   const [loading, setLoading] = useState(true);
   const [output, setOutput] = useState<string>("");
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<null | number | "all">(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("businessData");
@@ -34,46 +34,75 @@ export default function ResultPage() {
     generate();
   }, []);
 
-  const handleCopy = async () => {
-    if (!output) return;
-    await navigator.clipboard.writeText(output);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const blocks = output ? output.split(/\n\s*\n/) : [];
 
   return (
-    <div className="min-h-screen p-6 max-w-2xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">Hasil Konten</h1>
+    <div className="min-h-screen p-6 max-w-2xl mx-auto space-y-8">
+      
+      <header className="space-y-2">
+        <h1 className="text-4xl font-bold">Konten Siap Pakai 🎉</h1>
+        {!loading && (
+          <p className="text-gray-500">
+            Copy caption di bawah atau generate ulang untuk variasi lain.
+          </p>
+        )}
+      </header>
 
       {loading ? (
         <p className="animate-pulse text-gray-600">Sedang generate...</p>
       ) : (
-        <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap text-gray-800">
-          {output}
-        </pre>
+        <div className="space-y-6">
+          {blocks.map((block, index) => (
+            <div
+              key={index}
+              className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm"
+            >
+              <p className="text-gray-800 whitespace-pre-wrap">{block.trim()}</p>
+
+              <button
+                className={`mt-3 px-3 py-2 text-sm rounded transition ${
+                  copied === index
+                    ? "bg-blue-700 text-white"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                }`}
+                onClick={() => {
+                  navigator.clipboard.writeText(block.trim());
+                  setCopied(index);
+                  setTimeout(() => setCopied(null), 2000);
+                }}
+              >
+                {copied === index ? "✔ Tersalin" : "Copy Bagian Ini"}
+              </button>
+            </div>
+          ))}
+        </div>
       )}
 
-      <div className="flex gap-4">
-        {!loading && (
+      {!loading && (
+        <div className="flex gap-4">
           <button
-            onClick={handleCopy}
-            className={`px-4 py-3 rounded ${
-              copied
+            onClick={() => {
+              navigator.clipboard.writeText(output);
+              setCopied("all");
+              setTimeout(() => setCopied(null), 2000);
+            }}
+            className={`px-4 py-3 rounded transition ${
+              copied === "all"
                 ? "bg-blue-700 text-white"
                 : "bg-blue-600 hover:bg-blue-700 text-white"
-            } transition`}
+            }`}
           >
-            {copied ? "Tersalin!" : "Copy"}
+            {copied === "all" ? "Semua Disalin" : "Copy Semua"}
           </button>
-        )}
 
-        <button
-          className="bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 transition"
-          onClick={() => window.location.reload()}
-        >
-          Generate Ulang
-        </button>
-      </div>
+          <button
+            className="px-4 py-3 rounded bg-green-600 text-white hover:bg-green-700 transition"
+            onClick={() => window.location.reload()}
+          >
+            Generate Ulang
+          </button>
+        </div>
+      )}
     </div>
   );
 }
