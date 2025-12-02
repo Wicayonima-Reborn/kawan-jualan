@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 export default function ResultPage() {
   const [loading, setLoading] = useState(true);
   const [output, setOutput] = useState<string>("");
-  const [copied, setCopied] = useState<null | number | "all">(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedAll, setCopiedAll] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("businessData");
@@ -34,69 +35,78 @@ export default function ResultPage() {
     generate();
   }, []);
 
-  const blocks = output ? output.split(/\n\s*\n/) : [];
+  // Clean formatting
+  const formatChunks = (text: string) => {
+    return text
+      .split(/\n\s*\n/)
+      .filter((block) => block.trim() !== "")
+      .map((block) => block
+        .replace(/^\d+\)\s*/g, "")         // Remove "1), 2), 3)"
+        .replace(/\*\*/g, "")              // Remove bold markdown
+        .trim()
+      );
+  };
+
+  const chunks = formatChunks(output);
+
+  const handleCopySection = async (text: string, index: number) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 1200);
+  };
+
+  const handleCopyAll = async () => {
+    await navigator.clipboard.writeText(output);
+    setCopiedAll(true);
+    setTimeout(() => setCopiedAll(false), 1200);
+  };
 
   return (
-    <div className="min-h-screen p-6 max-w-2xl mx-auto space-y-8">
-      
-      <header className="space-y-2">
-        <h1 className="text-4xl font-bold">Konten Siap Pakai 🎉</h1>
-        {!loading && (
-          <p className="text-gray-500">
-            Copy caption di bawah atau generate ulang untuk variasi lain.
-          </p>
-        )}
-      </header>
+    <div className="min-h-screen p-6 max-w-3xl mx-auto space-y-6">
+      <h1 className="text-3xl font-bold">Konten Siap Pakai 🎉</h1>
+      <p className="text-gray-600">Copy caption di bawah atau generate ulang untuk variasi lain.</p>
 
       {loading ? (
-        <p className="animate-pulse text-gray-600">Sedang generate...</p>
+        <p className="animate-pulse text-gray-600 mt-4">⏳ Sedang generate...</p>
       ) : (
-        <div className="space-y-6">
-          {blocks.map((block, index) => (
-            <div
-              key={index}
-              className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm"
-            >
-              <p className="text-gray-800 whitespace-pre-wrap">{block.trim()}</p>
+        chunks.map((text, i) => {
+          const [title, ...content] = text.split("\n");
+
+          return (
+            <div key={i} className="bg-gray-100 p-4 rounded shadow space-y-4">
+              <p className="font-semibold text-lg capitalize">{title}</p>
+              <p className="whitespace-pre-wrap leading-relaxed text-gray-800">
+                {content.join("\n")}
+              </p>
 
               <button
-                className={`mt-3 px-3 py-2 text-sm rounded transition ${
-                  copied === index
-                    ? "bg-blue-700 text-white"
-                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                className={`px-4 py-2 rounded text-white transition-all duration-300 ${
+                  copiedIndex === i
+                    ? "bg-green-600 scale-105"
+                    : "bg-blue-600 hover:bg-blue-700"
                 }`}
-                onClick={() => {
-                  navigator.clipboard.writeText(block.trim());
-                  setCopied(index);
-                  setTimeout(() => setCopied(null), 2000);
-                }}
+                onClick={() => handleCopySection(content.join("\n"), i)}
               >
-                {copied === index ? "✔ Tersalin" : "Copy Bagian Ini"}
+                {copiedIndex === i ? "Disalin!" : "Copy Bagian Ini"}
               </button>
             </div>
-          ))}
-        </div>
+          );
+        })
       )}
 
       {!loading && (
-        <div className="flex gap-4">
+        <div className="flex gap-4 pt-4">
           <button
-            onClick={() => {
-              navigator.clipboard.writeText(output);
-              setCopied("all");
-              setTimeout(() => setCopied(null), 2000);
-            }}
-            className={`px-4 py-3 rounded transition ${
-              copied === "all"
-                ? "bg-blue-700 text-white"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
+            className={`px-4 py-3 rounded text-white transition-all duration-300 ${
+              copiedAll ? "bg-green-600 scale-105" : "bg-blue-600 hover:bg-blue-700"
             }`}
+            onClick={handleCopyAll}
           >
-            {copied === "all" ? "Semua Disalin" : "Copy Semua"}
+            {copiedAll ? "Semua sudah disalin!" : "Copy Semua"}
           </button>
 
           <button
-            className="px-4 py-3 rounded bg-green-600 text-white hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 transition-all"
             onClick={() => window.location.reload()}
           >
             Generate Ulang
