@@ -25,20 +25,51 @@ export async function POST(req: Request) {
     }
 
     const prompt = `
-    Buat 3 caption untuk bisnis berikut:
+Buat 3 caption marketing untuk bisnis berikut dengan kualitas copywriting profesional:
 
-    Nama bisnis: ${body.nama}
-    Produk: ${body.produk}
-    Audience: ${body.target}
+Nama bisnis: ${body.nama}
+Produk: ${body.produk}
+Target pembeli: ${body.target}
 
-    Tone: ${toneStyle[body.tone]}
-    Format: ${formatStyle[body.format]}
+Tone: ${toneStyle[body.tone]}
+Format konten: ${formatStyle[body.format]}
 
-    Output aturan:
-    - Jangan beri judul atau pembuka.
-    - Format: "1) ...", "2) ...", "3) ..."
-    - Pisahkan antar caption dengan "---"
-    `.trim();
+Brand personality wajib:
+- Human, friendly, dan relevan dengan anak muda
+- Bukan AI tone, bukan robotik
+- Hindari bahasa terlalu kaku atau terlalu banyak kata sifat
+
+Peraturan caption:
+
+1) Caption Pendek (8–15 kata)
+- Punchy, cepat, catchy.
+- Harus mengandung satu value kuat (contoh: rasa, suasana, urgency, lifestyle)
+- Maksimal 1 emoji, tidak wajib.
+
+2) Caption Medium (18–35 kata)
+- Sedikit lebih bercerita, tapi tetap straight to the point.
+- Kombinasikan benefit + situasi relatable + mini CTA.
+- Maksimal 2 emoji natural (boleh tanpa emoji).
+
+3) Caption Soft Selling (35–60 kata)
+- Emotional tone, seolah ngobrol sama pelanggan.
+- Harus memiliki alur singkat: situasi → rasa/experience → CTA halus
+- Tidak boleh hard selling.
+
+Format output WAJIB seperti ini:
+
+1) <caption pendek>
+---
+2) <caption medium>
+---
+3) <caption soft selling>
+
+Larangan:
+- Jangan tulis judul seperti "caption pendek", "caption 1", dll.
+- Jangan memberi pembuka atau penutup seperti “Berikut ini…”, “Semoga membantu…”
+- Hindari repetisi kata yang sama dalam 3 caption.
+`.trim();
+
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
