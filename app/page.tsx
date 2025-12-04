@@ -10,7 +10,7 @@ export default function Home() {
       
       <div className="space-y-6 max-w-lg">
         
-        {/* LOGO / BRAND */}
+        {/* LOGO/BRAND */}
         <h1 className="text-5xl font-bold tracking-tight">
           Kawan<span className="text-green-600">Jualan</span>
         </h1>
