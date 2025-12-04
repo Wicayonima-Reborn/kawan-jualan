@@ -36,6 +36,7 @@ export default function SetupPage() {
           name="nama"
           placeholder="Nama usaha"
           className="border p-3 rounded w-full"
+          autoComplete="off"
           onChange={handleChange}
         />
 
@@ -43,6 +44,7 @@ export default function SetupPage() {
           name="produk"
           placeholder="Produk utama"
           className="border p-3 rounded w-full"
+          autoComplete="off"
           onChange={handleChange}
         />
 
@@ -50,6 +52,7 @@ export default function SetupPage() {
           name="target"
           placeholder="Target pembeli (contoh: pelajar, ibu rumah tangga)"
           className="border p-3 rounded w-full"
+          autoComplete="off"
           onChange={handleChange}
         />
 
