@@ -3,26 +3,29 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Setup() {
+export default function CaptionForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(event: any) {
-    event.preventDefault();
+  async function handleSubmit(e: any) {
+    e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(event.target);
+    const form = new FormData(e.target);
 
     const data = {
-      nama: formData.get("nama"),
-      produk: formData.get("produk"),
-      target: formData.get("target"),
-      tone: formData.get("tone"),
-      format: formData.get("format"),
+      nama: form.get("nama"),
+      produk: form.get("produk"),
+      target: form.get("target"),
+      tone: form.get("tone"),
+      format: form.get("format"),
+      lastFeatureSelected: "caption",
+      timestamp: new Date().toISOString(),
     };
 
-    localStorage.setItem("businessData", JSON.stringify(data));
-    router.push("/result"); // tanpa delay
+    localStorage.setItem("kawanJualan", JSON.stringify(data));
+
+    router.push("/caption/result");
   }
 
   return (
@@ -30,15 +33,17 @@ export default function Setup() {
       
       <div className="w-full max-w-md space-y-6">
         
+        {/* HEADER */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">Isi Data Bisnismu</h1>
+          <h1 className="text-3xl font-bold">Buat Caption Jualan</h1>
           <p className="text-gray-500 text-sm">
-            Cuma 30 detik. Sisanya biar AI.
+            Isi sebentar, AI bantu sisanya.
           </p>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          
+
           <input
             name="nama"
             className="border p-3 rounded w-full focus:ring-2 focus:ring-green-500 transition"
@@ -50,7 +55,7 @@ export default function Setup() {
           <input
             name="produk"
             className="border p-3 rounded w-full focus:ring-2 focus:ring-green-500 transition"
-            placeholder="Produk (contoh: Es kopi susu gula aren)"
+            placeholder="Produk (contoh: Kopi Susu Gula Aren)"
             autoComplete="off"
             required
           />
@@ -58,14 +63,18 @@ export default function Setup() {
           <input
             name="target"
             className="border p-3 rounded w-full focus:ring-2 focus:ring-green-500 transition"
-            placeholder="Target Audience (contoh: mahasiswa)"
+            placeholder="Target Pembeli (contoh: mahasiswa)"
             autoComplete="off"
             required
           />
 
           {/* Tone Selector */}
           <label className="text-sm font-semibold">Tone Tulisan</label>
-          <select name="tone" className="border p-3 rounded w-full bg-white" defaultValue="genz">
+          <select
+            name="tone"
+            className="border p-3 rounded w-full bg-white"
+            defaultValue="genz"
+          >
             <option value="genz">Santai Gen-Z</option>
             <option value="formal">Formal Bisnis</option>
             <option value="soft">Soft Selling</option>
@@ -75,7 +84,11 @@ export default function Setup() {
 
           {/* Format Selector */}
           <label className="text-sm font-semibold">Format Output</label>
-          <select name="format" className="border p-3 rounded w-full bg-white" defaultValue="instagram">
+          <select
+            name="format"
+            className="border p-3 rounded w-full bg-white"
+            defaultValue="instagram"
+          >
             <option value="instagram">Caption Instagram</option>
             <option value="tiktok">Caption TikTok</option>
             <option value="reels">Script Reels / TikTok</option>
@@ -83,6 +96,7 @@ export default function Setup() {
             <option value="whatsapp">Caption WhatsApp Story</option>
           </select>
 
+          {/* CTA BUTTON */}
           <button
             type="submit"
             disabled={loading}
@@ -90,14 +104,14 @@ export default function Setup() {
               loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
             }`}
           >
-            {loading ? "Loading..." : "Buat Konten"}
+            {loading ? "Sebentar..." : "Buat Caption"}
           </button>
         </form>
 
+        {/* FOOTER */}
         <p className="text-center text-gray-400 text-xs">
-          Dengan klik lanjut, kamu setuju bahwa kamu makin produktif.
+          Dengan klik lanjut, kamu lebih produktif hari ini.
         </p>
-
       </div>
     </div>
   );
