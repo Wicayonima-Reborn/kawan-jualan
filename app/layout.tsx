@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kawan Jualan",
-  description: "Bantu UMKM bikin konten otomatis pakai AI",
+  title: "KawanJualan — Asisten UMKM Berbasis AI",
+  description:
+    "Bantu pelaku UMKM membuat caption marketing, rencana bisnis, dan simulasi keuangan otomatis. Tanpa login, praktis, dan siap pakai.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
