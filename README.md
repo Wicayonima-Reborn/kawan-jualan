@@ -1,5 +1,7 @@
 # KawanJualan
 
+## Home
+<img src="./docs/ss/home.png" width="400" />
 
 AI-assisted content & strategy generator untuk UMKM.  
 Tujuan aplikasi ini adalah membantu pemilik usaha kecil menghasilkan:
@@ -14,7 +16,7 @@ Aplikasi ini dibuat dengan fokus pada **real impact untuk UMKM**, bukan sekadar 
 
 ---
 
-## 🎯 Kenapa KawanJualan?
+## Why KawanJualan?
 
 UMKM sering kali tidak punya waktu atau skill marketing. KawanJualan membantu:
 
@@ -29,6 +31,8 @@ UMKM sering kali tidak punya waktu atau skill marketing. KawanJualan membantu:
 
 ## 🧠 Fitur Utama
 
+<img src="./docs/ss/choose.png" width="400" />
+
 - AI Caption Generator (3 format: pendek, medium, storytelling)
 - AI Business Planner
 - AI Finance Simulation
@@ -36,8 +40,6 @@ UMKM sering kali tidak punya waktu atau skill marketing. KawanJualan membantu:
 - Regenerate result
 - Copy all content (1 klik)
 - LocalStorage session resume
-
-Detail fitur lengkap ada di `FEATURES.md`.
 
 ---
 
@@ -54,28 +56,12 @@ Detail fitur lengkap ada di `FEATURES.md`.
 
 ---
 
-## 📦 Instalasi
+## Result nya
+<img src="./docs/ss/result.png" width="400" />
 
-Lihat `INSTALL_GUIDE.md`.
+## 📦 Instalasi + Pemakaian
 
----
-
-## 🧪 Status Development
-
-| Status | Keterangan |
-|---|---|
-| Stable Build | ✔ |
-| Deployment | ✔ Live di Vercel |
-| Fitur Export DOCX | ✔ |
-| Database Support | ❌ (bukan kebutuhan MVP) |
-| Auth | ❌ (bypass effort untuk UMKM simplicity) |
-
----
-
-## 📸 Screenshot
-
-> [Tambahkan setelah semua final]  
-> Folder: `/docs/screenshots`
+Lihat [GUIDE.md](./GUIDE.md) — Untuk Langkah Instalasi Sampai Pemakaian.
 
 ---
 
@@ -88,7 +74,7 @@ Lihat `INSTALL_GUIDE.md`.
 
 ## 👥 Kontributor
 
-- Frontend + Logic: Eldric (Wicayonima)
+- Frontend + Logic:  Wicayonima and NPL
 - Prompt Engineering: Custom in-house
 - UI/UX: Minimalist Clean Approach (User-first)
 
@@ -96,5 +82,5 @@ Lihat `INSTALL_GUIDE.md`.
 
 ## 📄 Lisensi
 
-MIT — bebas digunakan untuk manfaat UMKM.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE) — bebas digunakan untuk manfaat UMKM.
 
