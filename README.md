@@ -1,5 +1,6 @@
 # KawanJualan
 
+
 AI-assisted content & strategy generator untuk UMKM.  
 Tujuan aplikasi ini adalah membantu pemilik usaha kecil menghasilkan:
 
@@ -40,7 +41,7 @@ Detail fitur lengkap ada di `FEATURES.md`.
 
 ---
 
-## 🛠️ Teknologi
+## Tech Stack
 
 | Layer | Stack |
 |---|---|
@@ -80,23 +81,10 @@ Lihat `INSTALL_GUIDE.md`.
 
 ## 🎥 Video Demo
 
-> Link Video: _(upload setelah jadi)_
+> Link Video: [_Video Demo_](https://drive.google.com/file/d/1zLYgXJAI7wiSWo2N9c8-UiGkXIXAwaF6/view?usp=drive_link)
 
 ---
 
-## 🏆 Hackathon Criteria Mapping
-
-| Rubrik | Bukti |
-|---|---|
-| Functionality (50 poin) | Semua fitur bekerja end-to-end |
-| Innovation (40 poin) | Integrasi AI realtime untuk UMKM (use-case spesifik) |
-| Architecture (20 poin) | Modular: `/api`, `/utils`, `/core`, `/app/*.tsx` |
-| Code Quality (10 poin) | Variable jelas, tidak ada dead code |
-| Documentation & Video (80 poin) | README + GUIDE + Video + Screenshots |
-
-(Dokumen ini dibuat mengikuti rubrik penilaian hackathon.) :contentReference[oaicite:1]{index=1}
-
----
 
 ## 👥 Kontributor
 
