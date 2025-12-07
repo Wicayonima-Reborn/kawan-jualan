@@ -59,9 +59,14 @@ UMKM sering kali tidak punya waktu atau skill marketing. KawanJualan membantu:
 ## Result nya
 <img src="./docs/ss/result.png" width="400" />
 
-## 📦 Instalasi + Pemakaian
+## Instalasi + Pemakaian
 
 Lihat [GUIDE.md](./GUIDE.md) — Untuk Langkah Instalasi Sampai Pemakaian.
+
+---
+
+## Live Demo
+https://kawan-jualan.vercel.app
 
 ---
 
