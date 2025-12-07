@@ -7,20 +7,18 @@ import { exportToDOC } from "@/src/utils/exportDOC";
 export default function FinanceResult() {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
-  const [output, setOutput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [financeOutput, setFinanceOutput] = useState("");
   const [copied, setCopied] = useState(false);
-  const [regenerating, setRegenerating] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
-  // ---------------------------------
-  // Function: Fetch Financial Report
-  // ---------------------------------
+  // ambil hasil simulasi dari server
   const fetchFinancePlan = useCallback(async () => {
-    const storedData = localStorage.getItem("kawanJualan");
-    if (!storedData) return;
+    const savedData = localStorage.getItem("kawanJualan");
+    if (!savedData) return;
 
-    const parsedData = JSON.parse(storedData);
-    setLoading(true);
+    const parsedData = JSON.parse(savedData);
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/finance", {
@@ -30,26 +28,24 @@ export default function FinanceResult() {
       });
 
       const result = await response.json();
-      setOutput(result?.result || "");
+      setFinanceOutput(result?.result || "");
     } catch {
-      setOutput("⚠️ AI sedang sibuk, coba generate ulang.");
+      setFinanceOutput(" AI sedang sibuk, coba generate ulang.");
     } finally {
-      setLoading(false);
-      setRegenerating(false);
+      setIsLoading(false);
+      setIsRegenerating(false);
     }
   }, []);
 
-  // Run on first load
+  // load saat halaman pertama muncul
   useEffect(() => {
     fetchFinancePlan();
   }, [fetchFinancePlan]);
 
-  // ---------------------------------
-  // Format Output into Sections
-  // ---------------------------------
-  const formattedSections = loading
+  // pisah output AI jadi beberapa bagian
+  const formattedSections = isLoading
     ? []
-    : output
+    : financeOutput
         .split("---")
         .map((section) => section.trim())
         .filter((section) => section.length > 5);
@@ -59,10 +55,8 @@ export default function FinanceResult() {
       
       <h1 className="text-3xl font-bold text-center">Simulasi Keuangan 💰</h1>
 
-      {/* ---------------------------------
-          Skeleton Loading
-      --------------------------------- */}
-      {loading && (
+      {/* skeleton loading */}
+      {isLoading && (
         <div className="space-y-4 animate-pulse">
           {[1, 2, 3].map((index) => (
             <div
@@ -78,29 +72,24 @@ export default function FinanceResult() {
         </div>
       )}
 
-      {/* ---------------------------------
-          AI Output Content
-      --------------------------------- */}
-      {!loading &&
-        formattedSections.map((financeText, index) => (
+      {/* konten hasil simulasi */}
+      {!isLoading &&
+        formattedSections.map((text, index) => (
           <div
             key={index}
-            className="bg-white border border-gray-200 p-5 rounded-xl shadow-sm space-y-4"
+            className="bg-white border p-5 rounded-xl shadow-sm space-y-4"
           >
-            <p className="whitespace-pre-wrap leading-relaxed">{financeText}</p>
+            <p className="whitespace-pre-wrap leading-relaxed">{text}</p>
           </div>
         ))}
 
-      {/* ---------------------------------
-          Action Buttons
-      --------------------------------- */}
-      {!loading && formattedSections.length > 0 && (
+      {/* action button */}
+      {!isLoading && formattedSections.length > 0 && (
         <div className="flex flex-wrap justify-center gap-4 pt-4">
 
-          {/* Copy All */}
           <button
             onClick={() => {
-              navigator.clipboard.writeText(output);
+              navigator.clipboard.writeText(financeOutput);
               setCopied(true);
               setTimeout(() => setCopied(false), 1200);
             }}
@@ -111,18 +100,16 @@ export default function FinanceResult() {
             {copied ? "✓ Disalin" : "Copy Semua"}
           </button>
 
-          {/* Regenerate */}
           <button
             onClick={() => {
-              setRegenerating(true);
+              setIsRegenerating(true);
               fetchFinancePlan();
             }}
             className="px-5 py-3 rounded-lg border hover:bg-gray-100 transition"
           >
-            {regenerating ? "🔄 Generating..." : "🔁 Generate Ulang"}
+            {isRegenerating ? "🔄 Generating..." : "🔁 Generate Ulang"}
           </button>
 
-          {/* Export DOCX */}
           <button
             onClick={() => exportToDOC("FinanceReport", formattedSections)}
             className="px-5 py-3 rounded-lg border hover:bg-gray-100 transition"
@@ -130,7 +117,6 @@ export default function FinanceResult() {
             Export DOCX
           </button>
 
-          {/* Back */}
           <button
             onClick={() => router.push("/choose")}
             className="px-5 py-3 rounded-lg border hover:bg-gray-100 transition"

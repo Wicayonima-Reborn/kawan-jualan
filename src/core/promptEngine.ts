@@ -1,20 +1,24 @@
-export function generatePrompt(type: "caption" | "business" | "finance", data: any) {
+// generate prompt sesuai jenis fitur yang dipilih user
+export function generatePrompt(
+  type: "caption" | "business" | "finance",
+  data: Record<string, any>
+) {
   const baseRules = `
 Gunakan bahasa santai, natural, dan langsung ke hasil.
 Tidak perlu kalimat pembuka, tidak perlu disclaimers.
 Output harus rapi dan mudah di-copy user UMKM.
-`;
+`.trim();
 
   const preset = {
     caption: `
-  Kamu akan membuat 3 caption marketing untuk sebuah bisnis.
+Kamu akan membuat 3 caption marketing untuk sebuah bisnis.
 
 Informasi bisnis:
 - Nama usaha: ${data.nama}
 - Produk: ${data.produk}
 - Target pembeli: ${data.target}
 - Tone: ${data.tone}
-  - Format konten: ${data.format}
+- Format konten: ${data.format}
 
 OUTPUT RULES:
 - Output harus langsung berupa hasil caption, tanpa penjelasan tambahan.
@@ -31,10 +35,10 @@ FORMAT AKHIR YANG WAJIB:
 3) <caption soft selling storytelling 35–60 kata>
 
 Hanya tampilkan output persis dalam format itu, tanpa perubahan lain.
-  `.trim(),
+`.trim(),
 
     business: `
-  Kamu akan membuat rencana bisnis singkat untuk UMKM berdasarkan data berikut:
+Kamu akan membuat rencana bisnis singkat untuk UMKM berdasarkan data berikut:
 
 - Nama usaha: ${data.nama}
 - Produk: ${data.produk}
@@ -63,10 +67,10 @@ Action plan:
 - 90 hari
 
 Hanya hasil akhir dalam format di atas. Tidak ada tambahan teks lain.
-  `.trim(),
+`.trim(),
 
     finance: `
-  Kamu akan membuat simulasi pinjaman UMKM berdasarkan data berikut:
+Kamu akan membuat simulasi pinjaman UMKM berdasarkan data berikut:
 
 - Nominal diajukan: Rp ${data.nominal}
 - Tujuan pinjaman: ${data.tujuan}
@@ -93,8 +97,8 @@ Warning (jika cicilan >35% dari pemasukan)
 3 tips pengelolaan keuangan
 
 Hanya tampilkan hasil, tanpa instruksi tambahan.
-  `.trim(),
+`.trim(),
   };
 
-  return `${baseRules.trim()}\n\n${preset[type].trim()}`;
+  return `${baseRules}\n\n${preset[type]}`;
 }

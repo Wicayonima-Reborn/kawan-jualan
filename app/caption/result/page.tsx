@@ -7,21 +7,20 @@ import { exportToDOC } from "@/src/utils/exportDOC";
 export default function CaptionResult() {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
-  const [output, setOutput] = useState("");
+  // state UI
+  const [isLoading, setIsLoading] = useState(true);
+  const [captionResult, setCaptionResult] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [copiedAll, setCopiedAll] = useState(false);
-  const [regenerating, setRegenerating] = useState(false);
+  const [isCopiedAll, setIsCopiedAll] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
-  // ----------------------------------
-  // Function: Fetch captions from AI
-  // ----------------------------------
+  // ambil hasil caption dari API
   const fetchCaptions = useCallback(async () => {
     const savedData = localStorage.getItem("kawanJualan");
     if (!savedData) return;
 
+    setIsLoading(true);
     const parsedData = JSON.parse(savedData);
-    setLoading(true);
 
     try {
       const response = await fetch("/api/caption", {
@@ -31,25 +30,24 @@ export default function CaptionResult() {
       });
 
       const apiResult = await response.json();
-      setOutput(apiResult?.result || "");
+      setCaptionResult(apiResult?.result || "");
     } catch {
-      setOutput("⚠️ AI tidak merespons. Coba generate ulang.");
+      setCaptionResult(" AI tidak merespons, Coba generate ulang.");
     } finally {
-      setLoading(false);
-      setRegenerating(false);
+      setIsLoading(false);
+      setIsRegenerating(false);
     }
   }, []);
 
+  // jalan waktu halaman kebuka
   useEffect(() => {
     fetchCaptions();
   }, [fetchCaptions]);
 
-  // ----------------------------------
-  // Format AI Output into sections
-  // ----------------------------------
-  const formattedCaptions = loading
+  // format hasil AI biar clean
+  const formattedCaptions = isLoading
     ? []
-    : output
+    : captionResult
         .split("---")
         .map((text) => text.trim())
         .filter((text) => text.length > 5);
@@ -65,10 +63,8 @@ export default function CaptionResult() {
       
       <h1 className="text-3xl font-bold text-center">Caption Siap Pakai 🎉</h1>
 
-      {/* --------------------------------------------------
-          Skeleton Loading
-      --------------------------------------------------- */}
-      {loading && (
+      {/* loading skeleton */}
+      {isLoading && (
         <div className="space-y-4 animate-pulse">
           {[1, 2, 3].map((i) => (
             <div key={i} className="p-5 rounded-xl border bg-gray-200 shadow-sm">
@@ -81,10 +77,8 @@ export default function CaptionResult() {
         </div>
       )}
 
-      {/* --------------------------------------------------
-          AI Output Blocks
-      --------------------------------------------------- */}
-      {!loading &&
+      {/* hasil caption */}
+      {!isLoading &&
         formattedCaptions.map((captionText, index) => (
           <div
             key={index}
@@ -94,11 +88,11 @@ export default function CaptionResult() {
               {captionLabels[index] || `Hasil ${index + 1}`}
             </p>
 
-            <p className="whitespace-pre-wrap text-lg leading-relaxed">
+            <p className="whitespace-pre-wrap text-lg">
               {captionText}
             </p>
 
-            {/* Copy per caption */}
+            {/* copy per item */}
             <button
               onClick={() => {
                 navigator.clipboard.writeText(captionText);
@@ -114,38 +108,36 @@ export default function CaptionResult() {
           </div>
         ))}
 
-      {/* --------------------------------------------------
-          Footer Action Buttons
-      --------------------------------------------------- */}
-      {!loading && formattedCaptions.length > 0 && (
+      {/* aksi footer */}
+      {!isLoading && formattedCaptions.length > 0 && (
         <div className="flex flex-wrap justify-center gap-4 pt-4">
 
-          {/* Copy All */}
+          {/* copy semua */}
           <button
             onClick={() => {
               navigator.clipboard.writeText(formattedCaptions.join("\n\n"));
-              setCopiedAll(true);
-              setTimeout(() => setCopiedAll(false), 1300);
+              setIsCopiedAll(true);
+              setTimeout(() => setIsCopiedAll(false), 1300);
             }}
             className={`px-5 py-3 rounded-xl text-white transition ${
-              copiedAll ? "bg-green-600" : "bg-blue-600 hover:bg-blue-700"
+              isCopiedAll ? "bg-green-600" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {copiedAll ? "✓ Semua Disalin" : "Copy Semua"}
+            {isCopiedAll ? "✓ Semua Disalin" : "Copy Semua"}
           </button>
 
-          {/* Regenerate */}
+          {/* regenerate */}
           <button
             onClick={() => {
-              setRegenerating(true);
+              setIsRegenerating(true);
               fetchCaptions();
             }}
             className="px-5 py-3 rounded-xl border hover:bg-gray-100 transition"
           >
-            {regenerating ? "🔄 Generating..." : "🔁 Generate Ulang"}
+            {isRegenerating ? "🔄 Generating..." : "🔁 Generate Ulang"}
           </button>
 
-          {/* Export DOCX */}
+          {/* export docx */}
           <button
             onClick={() => exportToDOC("Caption_Jualan", formattedCaptions)}
             className="px-5 py-3 rounded-xl border hover:bg-gray-100 transition"
@@ -153,7 +145,7 @@ export default function CaptionResult() {
             Export DOCX
           </button>
 
-          {/* Back */}
+          {/* back */}
           <button
             onClick={() => router.push("/choose")}
             className="px-5 py-3 rounded-xl border hover:bg-gray-100 transition"

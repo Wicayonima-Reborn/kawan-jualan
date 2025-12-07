@@ -1,11 +1,13 @@
 export async function runAI(prompt: string) {
+  // cek API key
   if (!process.env.KOLOSAL_API_KEY) {
     throw new Error("Missing Kolosal API Key");
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
 
+  // request ke API Kolosal
   const response = await fetch("https://api.kolosal.ai/v1/chat/completions", {
     method: "POST",
     signal: controller.signal,
@@ -19,13 +21,13 @@ export async function runAI(prompt: string) {
     }),
   });
 
-  clearTimeout(timeout);
+  clearTimeout(timeoutId);
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Kolosal Error: ${response.status} - ${errorText}`);
+    const errorDetails = await response.text();
+    throw new Error(`Kolosal Error: ${response.status} - ${errorDetails}`);
   }
 
-  const data = await response.json();
-  return data?.choices?.[0]?.message?.content || "";
+  const result = await response.json();
+  return result?.choices?.[0]?.message?.content || "";
 }
